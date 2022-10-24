@@ -1,0 +1,35 @@
+@import "../../vars.scss";
+
+p{
+    color: $primary-light;
+}
+
+$social_icon_size: 25px;
+
+.credits{
+    display: grid;
+    width: 100vw;
+    grid-template-columns: repeat(3,1fr);
+    gap: 16px;
+    margin-left: 16px;
+    font-size: 22px;
+
+    .socials{
+        justify-self: center;
+        .social{
+            color: $primary-light;
+            width: $social_icon_size;
+            height: $social_icon_size;
+            transition: .5s;
+            &:hover{
+                color: $primary-dark;
+            }
+        }
+        
+        .icons{
+            display: flex;
+            gap: 8px;
+            justify-content: space-around;
+        }
+    }
+}
