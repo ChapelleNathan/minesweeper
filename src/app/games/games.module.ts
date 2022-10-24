@@ -1,18 +1,18 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DeminerComponent } from './deminer/deminer.component';
+import { MineSweeperModule } from './minesweeper/minesweeper.module';
+import { MineSweeperComponent } from './minesweeper/minesweeper.component';
 
 
 
 @NgModule({
-  declarations: [
-    DeminerComponent
-  ],
+  declarations: [],
   imports: [
-    CommonModule
+    CommonModule,
+    MineSweeperModule
   ],
   exports:[
-    DeminerComponent
+    MineSweeperComponent
   ],
 })
 export class GamesModule { }

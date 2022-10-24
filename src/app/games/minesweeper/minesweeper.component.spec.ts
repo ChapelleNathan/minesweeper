@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { DeminerComponent } from './deminer.component';
+import { MineSweeperComponent } from './minesweeper.component';
 
-describe('DeminerComponent', () => {
-  let component: DeminerComponent;
-  let fixture: ComponentFixture<DeminerComponent>;
+describe('MineSweeper', () => {
+  let component: MineSweeperComponent;
+  let fixture: ComponentFixture<MineSweeperComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ DeminerComponent ]
+      declarations: [ MineSweeperComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(DeminerComponent);
+    fixture = TestBed.createComponent(MineSweeperComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
