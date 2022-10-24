@@ -2,9 +2,18 @@
 body{
    margin: 0;
    background-color: $primary-light;
+   height: 100vh;
+}
+
+app-root{
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 h1,h2,h3,p {
     margin: 0;
     font-family: $font;
+    color: $primary-dark;
 }

@@ -1,6 +1,9 @@
 @import "../vars.scss";
 
-app-navbar{
+app-navbar, app-footer{
+    &.footer{
+        height: 15vh;
+    }
     display: flex;
     width: 100%;
     height: 7.5vh;
