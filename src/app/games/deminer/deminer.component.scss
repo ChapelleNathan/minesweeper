@@ -1,0 +1,66 @@
+@import "../../../vars.scss";
+
+.deminer_window {
+
+  background-color: $primary-dark;
+
+  .games_bar {
+    background-color: $primary-color;
+    height: 50px;
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    select {
+      background-color: $primary-light;
+      border: 1px solid $primary-light;
+      border-radius: 5px;
+      width: 90px;
+      height: 25px;
+      align-self: center;
+      font-size: 14px;
+    }
+  }
+
+  p {
+    color: $primary-light;
+  }
+
+  .games_stats {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 22px;
+    &_flags {
+      display: flex;
+      gap: 4px;
+      .bi-flag-fill {
+        color: #b6301e;
+      }
+    }
+    &_time {
+      .bi-stopwatch-fill {
+        color: #fdb034;
+      }
+      display: flex;
+      gap: 3px;
+    }
+
+    &_icons {
+      width: 25px;
+      height: 25px;
+    }
+  }
+
+  .bi-arrow-counterclockwise {
+    align-self: center;
+    color: $primary-light;
+    width: 25px;
+    height: 25px;
+  }
+
+  .game {
+    display: grid;
+    grid-template-columns: repeat(10,45px);
+    grid-template-rows: repeat(8,45px);
+  }
+}
