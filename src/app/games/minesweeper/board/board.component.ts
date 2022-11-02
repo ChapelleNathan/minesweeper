@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DifficultiesEnum } from '../Enums/difficulties.enum';
 import { Tiles_States } from '../Enums/tiles_states.enum';
@@ -13,11 +13,15 @@ import { TilesComponent } from './tiles/tiles.component';
 export class BoardComponent implements OnInit {
 
   @Input() userDifficulty: DifficultiesEnum = DifficultiesEnum.easy;
-  @Output()flagCount: number = 0;
+  @Output()flagCountdown: EventEmitter<number> = new EventEmitter;
+  @Output() winEvent: EventEmitter<boolean> = new EventEmitter();
 
+  flagCount = 0;
   difficulties = DifficultiesEnum;
   board: TilesComponent[][] = [];
   minedTiles: TilesComponent[] = [];
+  notMinedTiles: TilesComponent[] = [];
+  emptyTiles: TilesComponent[] = [];
   selectedDifficulty:string = '';
   difficultyConfig: Difficulties_Options;
   DifficultiesOptions: Difficulties_Options[] = [
@@ -51,8 +55,9 @@ export class BoardComponent implements OnInit {
   }
 
   initBoard(difficulty: DifficultiesEnum): void {
-    this.difficultyConfig = this.detectDifficulty(difficulty);    
-    this.flagCount = this.difficultyConfig.mineCount;
+    this.difficultyConfig = this.detectDifficulty(difficulty);
+    this.flagCount = this.difficultyConfig.mineCount  
+    this.flagCountdown.emit(this.flagCount);
     this.board = this.buildBoard(this.difficultyConfig.rows, this.difficultyConfig.columns, this.difficultyConfig.mineCount);
   }
 
@@ -73,22 +78,29 @@ export class BoardComponent implements OnInit {
         board[x][y] = new TilesComponent([x,y]);
       }
     }
-    this.generateMines(board, mineCount);
+    this.generateMine(board, mineCount);    
     for(let x = 0; x < rows; x ++){
       for(let y = 0; y < columns; y++){        
         this.detectMines(board[x][y], board)
+        if(!board[x][y].mined){
+          this.notMinedTiles.push(board[x][y]);
+        }
       }
     }
     return board;
   }
 
-  generateMines(board: TilesComponent[][], mineCount: number): TilesComponent[][] {
+  generateMine(board: TilesComponent[][], mineCount: number): TilesComponent[][] {
     for(let i = 0; i < mineCount; i++) {
       let x = Math.floor(Math.random() * board.length);
       let y = Math.floor(Math.random() * board[0].length);
       let minedTile = board[x][y];
-      minedTile.generateMines();
-      this.minedTiles.push(minedTile);
+      if(this.minedTiles.includes(minedTile)) {
+        this.generateMine(board, 1);
+      } else {
+        minedTile.newMine();
+        this.minedTiles.push(minedTile);
+      }
     }
     return board;
   }
@@ -101,7 +113,9 @@ export class BoardComponent implements OnInit {
             this.gameOver();
             return;
           }
+          this.emptyTiles.push(tile);
           tile.setEmpty();
+          this.checkWinCondition();
         break;
       case tile.states.flagged:
         console.log("there is a flag");
@@ -111,9 +125,21 @@ export class BoardComponent implements OnInit {
 
   onRightClick(tile: TilesComponent){
     if(tile.tileState === tile.states.hidden){
-      tile.setFlag();
+      if(this.flagCount > 0){
+        tile.setFlag();
+        this.flagCountdown.emit(--this.flagCount);
+      } else {
+        console.log('vous n\'avez plus de drapeau');
+      }
     } else {
       tile.setHidden();
+    }
+  }
+
+  checkWinCondition(): void{
+    let missing = this.notMinedTiles.filter(tile => this.emptyTiles.indexOf(tile) < 0);
+    if(missing.length === 0){
+      this.winEvent.emit(true);
     }
   }
 

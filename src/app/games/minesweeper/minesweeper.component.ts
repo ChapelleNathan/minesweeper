@@ -13,7 +13,8 @@ export class MineSweeperComponent implements OnInit {
   difficulties = DifficultiesEnum;
   userDifficulty$ :Observable<DifficultiesEnum> = new Observable;
   userDifficulty : DifficultiesEnum = DifficultiesEnum.easy;
-
+  winState: boolean = false;
+  flagCount: number = 10;
   constructor() {}
 
   ngOnInit(): void {
@@ -26,5 +27,12 @@ export class MineSweeperComponent implements OnInit {
       this.userDifficulty = this.difficulties.easy;
     });    
   }
+  onWin(e: any):void {
+    this.winState = e;
+  }
 
+  flagCountdown(e: any):void {
+    this.flagCount = e;
+    console.log(this.flagCount);
+  }
 }

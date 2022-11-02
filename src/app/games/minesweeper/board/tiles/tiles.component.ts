@@ -20,7 +20,7 @@ export class TilesComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  generateMines():void {
+  newMine():void {
     this.mined =true;
   }
 
