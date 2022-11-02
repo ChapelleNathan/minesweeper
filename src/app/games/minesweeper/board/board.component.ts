@@ -15,8 +15,8 @@ export class BoardComponent implements OnInit {
   difficulties = DifficultiesEnum;
   @Input() userDifficulty: DifficultiesEnum = DifficultiesEnum.easy;
   board: TilesComponent[][] = [];
+  minedTiles: TilesComponent[] = [];
   selectedDifficulty:string = '';
-  gameOver: boolean = false;
   DifficultiesOptions: Difficulties_Options[] = [
     {
       difficulty: DifficultiesEnum.easy,
@@ -78,7 +78,9 @@ export class BoardComponent implements OnInit {
     for(let i = 0; i < mineCount; i++) {
       let x = Math.floor(Math.random() * board.length);
       let y = Math.floor(Math.random() * board[0].length);
-      board[x][y].generateMines();
+      let minedTile = board[x][y];
+      minedTile.generateMines();
+      this.minedTiles.push(minedTile);
     }
     return board;
   }
@@ -116,14 +118,8 @@ export class BoardComponent implements OnInit {
   }
 
   gameIsOver(): void {
-    this.gameOver = true;
-    for(let x = 0; x < this.board.length; x++){
-      for(let y = 0; y < this.board[x].length; y++){
-        let minedTile = this.board[x][y];
-        if(minedTile.mined){
-          minedTile.setMine();
-        }
-      }
-    }
+    this.minedTiles.forEach(minedTile => {
+      minedTile.setMine();
+    })
   }
 }
