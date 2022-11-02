@@ -16,4 +16,9 @@ export class TilesComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  setMine(): TilesComponent{
+    this.tileState = Tiles_States.mined;
+    return this;
+  }
+
 }
