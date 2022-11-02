@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Tiles_States } from '../../Enums/tiles_states.enum';
 
 @Component({
   selector: 'app-tiles',
@@ -6,6 +7,9 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./tiles.component.scss']
 })
 export class TilesComponent implements OnInit {
+
+  states = Tiles_States;
+  tileState: Tiles_States = Tiles_States.hidden;
 
   constructor() { }
 

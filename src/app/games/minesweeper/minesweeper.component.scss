@@ -2,8 +2,6 @@
 
 .minesweeper_window {
 
-  background-color: $primary-dark;
-
   .games_bar {
     background-color: $primary-color;
     height: 50px;
@@ -56,11 +54,5 @@
     color: $primary-light;
     width: 25px;
     height: 25px;
-  }
-
-  .game {
-    display: grid;
-    grid-template-columns: repeat(10,45px);
-    grid-template-rows: repeat(8,45px);
   }
 }

@@ -1,9 +1,9 @@
 <div class="minesweeper_window">
     <div class="games_bar">
         <select name="game_difficulty" id="gameDifficulty">
-            <option value="easy">Facile</option>
-            <option value="medium">Moyen</option>
-            <option value="hard">Difficile</option>
+            <option value="easy">{{ difficulties[0] }}</option>
+            <option value="medium">{{ difficulties[1] }}</option>
+            <option value="hard">{{ difficulties[2] }}</option>
         </select>
         <div class="games_stats">
             <div class="games_stats_flags">
@@ -31,7 +31,5 @@
             </svg>
     </div>
 
-    <div class="game">
-        
-    </div>
+    <minesweeper-board [userDifficulty]="userDifficulty"></minesweeper-board>
 </div>
