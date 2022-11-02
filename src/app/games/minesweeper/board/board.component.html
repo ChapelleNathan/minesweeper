@@ -5,7 +5,7 @@
                 <tr>
                     <ng-container *ngFor="let tile of rows">
                         <td [ngSwitch]="tile.tileState" class="tile">
-                            <div class="empty" *ngSwitchCase="tile.states.empty" (click)="onLeftClick(tile)"></div>
+                            <div class="empty" *ngSwitchCase="tile.states.empty" (click)="onLeftClick(tile)"><p>{{ tile.minesAround }}</p></div>
                             <div class="flag" *ngSwitchCase="tile.states.flagged" (click)="onLeftClick(tile)" (contextmenu)="onRightClick(tile)">🚩</div>
                             <div class="mined" *ngSwitchCase="tile.states.mined" (click)="onLeftClick(tile)">💣</div>
                             <div *ngSwitchDefault (click)="onLeftClick(tile)" (contextmenu)="onRightClick(tile)">

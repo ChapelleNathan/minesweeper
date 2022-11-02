@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DifficultiesEnum } from '../Enums/difficulties.enum';
 import { Tiles_States } from '../Enums/tiles_states.enum';
@@ -12,11 +12,14 @@ import { TilesComponent } from './tiles/tiles.component';
 })
 export class BoardComponent implements OnInit {
 
-  difficulties = DifficultiesEnum;
   @Input() userDifficulty: DifficultiesEnum = DifficultiesEnum.easy;
+  @Output()flagCount: number = 0;
+
+  difficulties = DifficultiesEnum;
   board: TilesComponent[][] = [];
   minedTiles: TilesComponent[] = [];
   selectedDifficulty:string = '';
+  difficultyConfig: Difficulties_Options;
   DifficultiesOptions: Difficulties_Options[] = [
     {
       difficulty: DifficultiesEnum.easy,
@@ -39,7 +42,7 @@ export class BoardComponent implements OnInit {
   ]
 
   constructor() {
-    
+    this.difficultyConfig = this.DifficultiesOptions[DifficultiesEnum.easy];
   }
 
   ngOnInit(): void {
@@ -48,10 +51,9 @@ export class BoardComponent implements OnInit {
   }
 
   initBoard(difficulty: DifficultiesEnum): void {
-    let difficultyOptions = this.detectDifficulty(difficulty);
-    
-    this.board = this.buildBoard(difficultyOptions.rows, difficultyOptions.columns, difficultyOptions.mineCount);
-    
+    this.difficultyConfig = this.detectDifficulty(difficulty);    
+    this.flagCount = this.difficultyConfig.mineCount;
+    this.board = this.buildBoard(this.difficultyConfig.rows, this.difficultyConfig.columns, this.difficultyConfig.mineCount);
   }
 
   detectDifficulty(difficulty: DifficultiesEnum): Difficulties_Options {
@@ -68,10 +70,16 @@ export class BoardComponent implements OnInit {
     for(let x = 0; x < rows; x++){
       board[x] = [];
       for(let y = 0; y < columns; y++){
-        board[x][y] = new TilesComponent;
+        board[x][y] = new TilesComponent([x,y]);
       }
     }
-    return this.generateMines(board, mineCount);
+    this.generateMines(board, mineCount);
+    for(let x = 0; x < rows; x ++){
+      for(let y = 0; y < columns; y++){        
+        this.detectMines(board[x][y], board)
+      }
+    }
+    return board;
   }
 
   generateMines(board: TilesComponent[][], mineCount: number): TilesComponent[][] {
@@ -90,7 +98,7 @@ export class BoardComponent implements OnInit {
       case tile.states.hidden:
           if(tile.mined){
             tile.setMine();
-            this.gameIsOver();
+            this.gameOver();
             return;
           }
           tile.setEmpty();
@@ -117,9 +125,46 @@ export class BoardComponent implements OnInit {
     this.selectedDifficulty = DifficultiesEnum[this.userDifficulty];
   }
 
-  gameIsOver(): void {
+  gameOver(): void {
     this.minedTiles.forEach(minedTile => {
       minedTile.setMine();
     })
+  }
+
+  detectMines(tile: TilesComponent, board: TilesComponent[][]): void {
+    let tileX = tile.coordonate[0];
+    let tileY = tile.coordonate[1];
+    
+    if (tileX - 1 >= 0 && board[tileX - 1][tileY].mined){
+      tile.minesAround++;
+    }
+
+    if (tileX + 1 < this.difficultyConfig.rows && board[tileX + 1][tileY].mined){
+      tile.minesAround++;
+    }
+
+    if (tileY - 1 >= 0 && board[tileX][tileY - 1].mined){
+      tile.minesAround++;
+    }
+
+    if (tileY + 1 < this.difficultyConfig.columns && board[tileX][tileY + 1].mined){
+      tile.minesAround++;
+    }
+
+    if ((tileX - 1 >= 0 && tileY - 1 >= 0) && board[tileX - 1][tileY - 1].mined){
+      tile.minesAround++;
+    }
+
+    if ((tileX + 1 < this.difficultyConfig.rows && tileY + 1 < this.difficultyConfig.columns) && board[tileX + 1][tileY + 1].mined){
+      tile.minesAround++;
+    }
+
+    if ((tileX - 1 >= 0 && tileY + 1 < this.difficultyConfig.columns) && board[tileX - 1][tileY + 1].mined){
+      tile.minesAround++;
+    }
+
+    if ((tileX + 1 < this.difficultyConfig.rows && tileY - 1 >= 0) && board[tileX + 1][tileY - 1].mined){
+      tile.minesAround++;
+    }
   }
 }

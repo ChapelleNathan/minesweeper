@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Tiles_States } from '../../Enums/tiles_states.enum';
 
 @Component({
@@ -11,8 +11,11 @@ export class TilesComponent implements OnInit {
   states = Tiles_States;
   tileState: Tiles_States = Tiles_States.hidden;
   mined: boolean = false;
-
-  constructor() { }
+  coordonate: number[] = [];
+  minesAround: number = 0;
+  constructor(@Inject(Number)coordonate: number[]) {
+    this.coordonate = coordonate;
+  }
 
   ngOnInit(): void {
   }
