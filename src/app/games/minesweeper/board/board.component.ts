@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DifficultiesEnum } from '../Enums/difficulties.enum';
+import { Tiles_States } from '../Enums/tiles_states.enum';
 import { Difficulties_Options } from '../interfaces/difficulties_options.interface';
 import { TilesComponent } from './tiles/tiles.component';
 
@@ -14,7 +15,8 @@ export class BoardComponent implements OnInit {
   difficulties = DifficultiesEnum;
   @Input() userDifficulty: DifficultiesEnum = DifficultiesEnum.easy;
   board: TilesComponent[][] = [];
-
+  selectedDifficulty:string = '';
+  gameOver: boolean = false;
   DifficultiesOptions: Difficulties_Options[] = [
     {
       difficulty: DifficultiesEnum.easy,
@@ -42,6 +44,7 @@ export class BoardComponent implements OnInit {
 
   ngOnInit(): void {
     this.initBoard(this.userDifficulty)
+    this.getSelectedDifficulty();
   }
 
   initBoard(difficulty: DifficultiesEnum): void {
@@ -75,8 +78,52 @@ export class BoardComponent implements OnInit {
     for(let i = 0; i < mineCount; i++) {
       let x = Math.floor(Math.random() * board.length);
       let y = Math.floor(Math.random() * board[0].length);
-      board[x][y].setMine();
+      board[x][y].generateMines();
     }
     return board;
+  }
+
+  onLeftClick(tile: TilesComponent) {
+    switch (tile.tileState) {
+      case tile.states.hidden:
+          if(tile.mined){
+            tile.setMine();
+            this.gameIsOver();
+            return;
+          }
+          tile.setEmpty();
+        break;
+      case tile.states.flagged:
+        console.log("there is a flag");
+        break;
+    }
+  }
+
+  onRightClick(tile: TilesComponent){
+    if(tile.tileState === tile.states.hidden){
+      tile.setFlag();
+    } else {
+      tile.setHidden();
+    }
+  }
+
+  contextMenu(e:any){
+    e.preventDefault();
+  }
+
+  getSelectedDifficulty(): void {
+    this.selectedDifficulty = DifficultiesEnum[this.userDifficulty];
+  }
+
+  gameIsOver(): void {
+    this.gameOver = true;
+    for(let x = 0; x < this.board.length; x++){
+      for(let y = 0; y < this.board[x].length; y++){
+        let minedTile = this.board[x][y];
+        if(minedTile.mined){
+          minedTile.setMine();
+        }
+      }
+    }
   }
 }

@@ -1,0 +1,57 @@
+.easy{
+    $width : 45px;
+    .tile{
+        width: $width;
+        height: $width;
+        .hidden,.flag,.mined,.empty{
+            width: $width;
+            height: $width;
+            font-size: calc($width - 6px);
+        }
+    }
+}
+
+.medium{
+    $width : 30px;
+    .tile{
+        width: $width;
+        height: $width;
+        .hidden,.flag,.mined,.empty{
+            width: $width;
+            height: $width;
+        }
+    }
+}
+
+.hard{
+    $width : 25px;
+    .tile{
+        width: $width;
+        height: $width;
+        .hidden,.flag,.mined,.empty{
+            width: $width;
+            height: $width;
+        }
+    }
+}
+
+
+.tile{
+    background-color: #aad751;
+}
+
+.tile:hover{
+    background-color: #c9f07c;
+}
+
+.flag, .mined{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+
+.empty{
+    background-color: #e5c29f;
+}
+
