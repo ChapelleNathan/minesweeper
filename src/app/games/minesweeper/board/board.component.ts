@@ -10,10 +10,9 @@ import { TilesComponent } from './tiles/tiles.component';
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss']
 })
-export class BoardComponent implements OnInit {
+export class BoardComponent {
 
   @Input() userDifficulty: DifficultiesEnum = DifficultiesEnum.easy;
-  @Output()flagCountdown: EventEmitter<number> = new EventEmitter;
   @Output() winEvent: EventEmitter<string> = new EventEmitter();
 
   flagCount = 0;
@@ -23,7 +22,6 @@ export class BoardComponent implements OnInit {
   notMinedTiles: TilesComponent[] = [];
   emptyTiles: TilesComponent[] = [];
   selectedDifficulty:string = '';
-  difficultyConfig: Difficulties_Options;
   DifficultiesOptions: Difficulties_Options[] = [
     {
       difficulty: DifficultiesEnum.easy,
@@ -44,20 +42,18 @@ export class BoardComponent implements OnInit {
       mineCount: 99,
     },
   ]
+  difficultyConfig: Difficulties_Options = this.DifficultiesOptions[DifficultiesEnum.easy];
 
   constructor() {
-    this.difficultyConfig = this.DifficultiesOptions[DifficultiesEnum.easy];
-  }
-
-  ngOnInit(): void {
     this.initBoard(this.userDifficulty)
     this.getSelectedDifficulty();
   }
 
+
+
   initBoard(difficulty: DifficultiesEnum): void {
     this.difficultyConfig = this.detectDifficulty(difficulty);
     this.flagCount = this.difficultyConfig.mineCount  
-    this.flagCountdown.emit(this.flagCount);
     this.board = this.buildBoard(this.difficultyConfig.rows, this.difficultyConfig.columns, this.difficultyConfig.mineCount);
   }
 
@@ -105,39 +101,6 @@ export class BoardComponent implements OnInit {
     return board;
   }
 
-  onLeftClick(tile: TilesComponent) {
-    switch (tile.tileState) {
-      case tile.states.hidden:
-          if(tile.mined){
-            this.gameOver();
-            return;
-          }
-          this.digRecurs(tile);
-          this.checkWinCondition();
-        break;
-      case tile.states.flagged:
-        console.log("there is a flag");
-        break;
-    }
-  }
-
-  onRightClick(tile: TilesComponent){
-    if(tile.tileState === tile.states.hidden){
-      if(this.flagCount > 0){
-        tile.setFlag();
-        this.flagCountdown.emit(--this.flagCount);
-      } else {
-        console.log('vous n\'avez plus de drapeau');
-      }
-    } else {
-      if(this.flagCount <= 10){
-        tile.setFlag();
-        this.flagCountdown.emit(++this.flagCount);
-      }
-      tile.setHidden();
-    }
-  }
-
   digRecurs(tile: TilesComponent, minesNear: boolean = false):void {
     let tileX = tile.coordonate[0];
     let tileY = tile.coordonate[1];
@@ -164,26 +127,8 @@ export class BoardComponent implements OnInit {
     }
   } 
 
-  checkWinCondition(): void{
-    let missing = this.notMinedTiles.filter(tile => this.emptyTiles.indexOf(tile) < 0);
-    if(missing.length === 0){
-      this.winEvent.emit('win');
-    }
-  }
-
-  contextMenu(e:any){
-    e.preventDefault();
-  }
-
   getSelectedDifficulty(): void {
     this.selectedDifficulty = DifficultiesEnum[this.userDifficulty];
-  }
-
-  gameOver(): void {
-    this.minedTiles.forEach(minedTile => {
-      minedTile.setMine();
-      this.winEvent.emit('loose');
-    })
   }
 
   detectMines(tile: TilesComponent): void {

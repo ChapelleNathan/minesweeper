@@ -49,10 +49,43 @@
     }
   }
 
-  .bi-arrow-counterclockwise {
+  .reset_button{
     align-self: center;
-    color: $primary-light;
-    width: 25px;
-    height: 25px;
+    cursor: pointer;
+    .bi-arrow-counterclockwise {
+      color: $primary-light;
+      width: 25px;
+      height: 25px;
+    }
   }
+
+  $width : 45px;
+    .tile{
+        width: $width;
+        height: $width;
+        .hidden,.flag,.mined,.empty{
+            width: $width;
+            height: $width;
+            font-size: calc($width - 6px);
+        }
+    }
+.tile{
+    background-color: #aad751;
+}
+
+.tile:hover{
+    background-color: #c9f07c;
+}
+
+.flag, .mined, .empty{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+
+.empty{
+    background-color: #e5c29f;
+}
+
 }
