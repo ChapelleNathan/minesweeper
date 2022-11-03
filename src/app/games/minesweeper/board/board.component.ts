@@ -150,7 +150,6 @@ export class BoardComponent implements OnInit {
         minesNear = true;
       }
       if (tileX - 1 >= 0) {
-        console.log('toto');
         this.digRecurs(this.board[tileX -1][tileY], minesNear);
       }
       if(tileX + 1 < this.difficultyConfig.rows){
