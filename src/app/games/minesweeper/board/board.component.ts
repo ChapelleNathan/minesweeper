@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Observable } from 'rxjs';
+import { first, Observable } from 'rxjs';
 import { DifficultiesEnum } from '../Enums/difficulties.enum';
 import { Tiles_States } from '../Enums/tiles_states.enum';
 import { Difficulties_Options } from '../interfaces/difficulties_options.interface';
@@ -14,7 +14,7 @@ export class BoardComponent implements OnInit {
 
   @Input() userDifficulty: DifficultiesEnum = DifficultiesEnum.easy;
   @Output()flagCountdown: EventEmitter<number> = new EventEmitter;
-  @Output() winEvent: EventEmitter<boolean> = new EventEmitter();
+  @Output() winEvent: EventEmitter<string> = new EventEmitter();
 
   flagCount = 0;
   difficulties = DifficultiesEnum;
@@ -78,10 +78,10 @@ export class BoardComponent implements OnInit {
         board[x][y] = new TilesComponent([x,y]);
       }
     }
-    this.generateMine(board, mineCount);    
+    this.board = this.generateMine(board, mineCount); 
     for(let x = 0; x < rows; x ++){
       for(let y = 0; y < columns; y++){        
-        this.detectMines(board[x][y], board)
+        this.detectMines(board[x][y])
         if(!board[x][y].mined){
           this.notMinedTiles.push(board[x][y]);
         }
@@ -109,12 +109,10 @@ export class BoardComponent implements OnInit {
     switch (tile.tileState) {
       case tile.states.hidden:
           if(tile.mined){
-            tile.setMine();
             this.gameOver();
             return;
           }
-          this.emptyTiles.push(tile);
-          tile.setEmpty();
+          this.digRecurs(tile);
           this.checkWinCondition();
         break;
       case tile.states.flagged:
@@ -132,14 +130,45 @@ export class BoardComponent implements OnInit {
         console.log('vous n\'avez plus de drapeau');
       }
     } else {
+      if(this.flagCount <= 10){
+        tile.setFlag();
+        this.flagCountdown.emit(++this.flagCount);
+      }
       tile.setHidden();
     }
   }
 
+  digRecurs(tile: TilesComponent, minesNear: boolean = false):void {
+    let tileX = tile.coordonate[0];
+    let tileY = tile.coordonate[1];
+    if(minesNear || tile.tileState === Tiles_States.empty){
+      return;
+    } else {
+      tile.setEmpty()
+      this.emptyTiles.push(tile);
+      if (tile.minesAround > 0){
+        minesNear = true;
+      }
+      if (tileX - 1 >= 0) {
+        console.log('toto');
+        this.digRecurs(this.board[tileX -1][tileY], minesNear);
+      }
+      if(tileX + 1 < this.difficultyConfig.rows){
+        this.digRecurs(this.board[tileX +1][tileY], minesNear);
+      }
+      if(tileY - 1 >= 0){
+        this.digRecurs(this.board[tileX][tileY - 1], minesNear);
+      }
+      if(tileY + 1 < this.difficultyConfig.columns){
+        this.digRecurs(this.board[tileX][tileY + 1], minesNear);
+      }
+    }
+  } 
+
   checkWinCondition(): void{
     let missing = this.notMinedTiles.filter(tile => this.emptyTiles.indexOf(tile) < 0);
     if(missing.length === 0){
-      this.winEvent.emit(true);
+      this.winEvent.emit('win');
     }
   }
 
@@ -154,42 +183,43 @@ export class BoardComponent implements OnInit {
   gameOver(): void {
     this.minedTiles.forEach(minedTile => {
       minedTile.setMine();
+      this.winEvent.emit('loose');
     })
   }
 
-  detectMines(tile: TilesComponent, board: TilesComponent[][]): void {
+  detectMines(tile: TilesComponent): void {
     let tileX = tile.coordonate[0];
     let tileY = tile.coordonate[1];
     
-    if (tileX - 1 >= 0 && board[tileX - 1][tileY].mined){
+    if (tileX - 1 >= 0 && this.board[tileX - 1][tileY].mined){
       tile.minesAround++;
     }
 
-    if (tileX + 1 < this.difficultyConfig.rows && board[tileX + 1][tileY].mined){
+    if (tileX + 1 < this.difficultyConfig.rows && this.board[tileX + 1][tileY].mined){
       tile.minesAround++;
     }
 
-    if (tileY - 1 >= 0 && board[tileX][tileY - 1].mined){
+    if (tileY - 1 >= 0 && this.board[tileX][tileY - 1].mined){
       tile.minesAround++;
     }
 
-    if (tileY + 1 < this.difficultyConfig.columns && board[tileX][tileY + 1].mined){
+    if (tileY + 1 < this.difficultyConfig.columns && this.board[tileX][tileY + 1].mined){
       tile.minesAround++;
     }
 
-    if ((tileX - 1 >= 0 && tileY - 1 >= 0) && board[tileX - 1][tileY - 1].mined){
+    if ((tileX - 1 >= 0 && tileY - 1 >= 0) && this.board[tileX - 1][tileY - 1].mined){
       tile.minesAround++;
     }
 
-    if ((tileX + 1 < this.difficultyConfig.rows && tileY + 1 < this.difficultyConfig.columns) && board[tileX + 1][tileY + 1].mined){
+    if ((tileX + 1 < this.difficultyConfig.rows && tileY + 1 < this.difficultyConfig.columns) && this.board[tileX + 1][tileY + 1].mined){
       tile.minesAround++;
     }
 
-    if ((tileX - 1 >= 0 && tileY + 1 < this.difficultyConfig.columns) && board[tileX - 1][tileY + 1].mined){
+    if ((tileX - 1 >= 0 && tileY + 1 < this.difficultyConfig.columns) && this.board[tileX - 1][tileY + 1].mined){
       tile.minesAround++;
     }
 
-    if ((tileX + 1 < this.difficultyConfig.rows && tileY - 1 >= 0) && board[tileX + 1][tileY - 1].mined){
+    if ((tileX + 1 < this.difficultyConfig.rows && tileY - 1 >= 0) && this.board[tileX + 1][tileY - 1].mined){
       tile.minesAround++;
     }
   }
