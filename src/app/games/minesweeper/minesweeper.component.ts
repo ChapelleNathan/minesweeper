@@ -9,7 +9,7 @@ import { DifficultiesEnum } from './Enums/difficulties.enum';
   templateUrl: './minesweeper.component.html',
   styleUrls: ['./minesweeper.component.scss']
 })
-export class MineSweeperComponent implements OnInit {
+export class MineSweeperComponent{
   
   board = new BoardComponent();
   difficulties = DifficultiesEnum;
@@ -17,10 +17,7 @@ export class MineSweeperComponent implements OnInit {
   userDifficulty : DifficultiesEnum = DifficultiesEnum.easy;
   winState: string = '';
   flagCount: number = 10;
-  constructor() {    
-  }
-
-  ngOnInit(): void {    
+  constructor() {
     this.init();
   }
 
