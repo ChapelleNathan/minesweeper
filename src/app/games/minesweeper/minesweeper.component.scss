@@ -59,16 +59,39 @@
     }
   }
 
-  $width : 45px;
-    .tile{
+  .easy{
+    $width : 45px;
+    width: $width;
+    height: $width;
+    .hidden,.flag,.mined,.empty{
         width: $width;
-        height: $width;
-        .hidden,.flag,.mined,.empty{
-            width: $width;
-            height: $width;
-            font-size: calc($width - 6px);
-        }
+       height: $width;
+       font-size: calc($width - 6px);
     }
+  }
+
+  .medium{
+    $width : 30px;
+    width: $width;
+    height: $width;
+    .hidden,.flag,.mined,.empty{
+        width: $width;
+       height: $width;
+       font-size: calc($width - 6px);
+    }
+  }
+
+  .hard{
+    $width : 24px;
+    width: $width;
+    height: $width;
+    .hidden,.flag,.mined,.empty{
+        width: $width;
+       height: $width;
+       font-size: calc($width - 6px);
+    }
+  }
+
 .tile{
     background-color: #aad751;
 }
@@ -86,6 +109,9 @@
 
 .empty{
     background-color: #e5c29f;
+    p{
+      color: black;
+    }
 }
 
 }

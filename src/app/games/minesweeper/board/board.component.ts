@@ -1,28 +1,27 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Inject, Injectable, Input, OnInit, Output } from '@angular/core';
 import { first, Observable } from 'rxjs';
 import { DifficultiesEnum } from '../Enums/difficulties.enum';
 import { Tiles_States } from '../Enums/tiles_states.enum';
-import { Difficulties_Options } from '../interfaces/difficulties_options.interface';
+import { DifficultyOption } from '../interfaces/difficulties_options.interface';
 import { TilesComponent } from './tiles/tiles.component';
-
 @Component({
   selector: 'minesweeper-board',
   templateUrl: './board.component.html',
   styleUrls: ['./board.component.scss']
 })
+@Injectable()
 export class BoardComponent {
 
   @Input() userDifficulty: DifficultiesEnum = DifficultiesEnum.easy;
   @Output() winEvent: EventEmitter<string> = new EventEmitter();
 
-  flagCount = 0;
   difficulties = DifficultiesEnum;
   board: TilesComponent[][] = [];
   minedTiles: TilesComponent[] = [];
   notMinedTiles: TilesComponent[] = [];
   emptyTiles: TilesComponent[] = [];
-  selectedDifficulty:string = '';
-  DifficultiesOptions: Difficulties_Options[] = [
+  selectedDifficulty: DifficultyOption;
+  DifficultiesOptions: DifficultyOption[] = [
     {
       difficulty: DifficultiesEnum.easy,
       rows: 8,
@@ -42,41 +41,29 @@ export class BoardComponent {
       mineCount: 99,
     },
   ]
-  difficultyConfig: Difficulties_Options = this.DifficultiesOptions[DifficultiesEnum.easy];
 
-  constructor() {
-    this.initBoard(this.userDifficulty)
-    this.getSelectedDifficulty();
+  constructor(difficulty: DifficultyOption) {
+    this.selectedDifficulty = difficulty;
+    this.initBoard()
   }
 
 
 
-  initBoard(difficulty: DifficultiesEnum): void {
-    this.difficultyConfig = this.detectDifficulty(difficulty);
-    this.flagCount = this.difficultyConfig.mineCount  
-    this.board = this.buildBoard(this.difficultyConfig.rows, this.difficultyConfig.columns, this.difficultyConfig.mineCount);
+  initBoard(): void {
+    this.board = this.buildBoard();    
   }
 
-  detectDifficulty(difficulty: DifficultiesEnum): Difficulties_Options {
-    for (let i = 0; i < this.DifficultiesOptions.length; i++) {
-      if (difficulty == this.DifficultiesOptions[i].difficulty) {
-        return this.DifficultiesOptions[i];
-      }
-    }
-    return this.DifficultiesOptions[0];
-  }
-
-  buildBoard(rows: number, columns: number, mineCount: number): TilesComponent[][] {
+  buildBoard(): TilesComponent[][] {
     let board: TilesComponent[][] = [];
-    for(let x = 0; x < rows; x++){
+    for(let x = 0; x < this.selectedDifficulty.rows; x++){
       board[x] = [];
-      for(let y = 0; y < columns; y++){
+      for(let y = 0; y < this.selectedDifficulty.columns; y++){
         board[x][y] = new TilesComponent([x,y]);
       }
     }
-    this.board = this.generateMine(board, mineCount); 
-    for(let x = 0; x < rows; x ++){
-      for(let y = 0; y < columns; y++){        
+    this.board = this.generateMine(board, this.selectedDifficulty.mineCount); 
+    for(let x = 0; x < this.selectedDifficulty.rows; x ++){
+      for(let y = 0; y < this.selectedDifficulty.columns; y++){        
         this.detectMines(board[x][y])
         if(!board[x][y].mined){
           this.notMinedTiles.push(board[x][y]);
@@ -115,21 +102,18 @@ export class BoardComponent {
       if (tileX - 1 >= 0) {
         this.digRecurs(this.board[tileX -1][tileY], minesNear);
       }
-      if(tileX + 1 < this.difficultyConfig.rows){
+      if(tileX + 1 < this.selectedDifficulty.rows){
         this.digRecurs(this.board[tileX +1][tileY], minesNear);
       }
       if(tileY - 1 >= 0){
         this.digRecurs(this.board[tileX][tileY - 1], minesNear);
       }
-      if(tileY + 1 < this.difficultyConfig.columns){
+      if(tileY + 1 < this.selectedDifficulty.columns){
         this.digRecurs(this.board[tileX][tileY + 1], minesNear);
       }
     }
   } 
 
-  getSelectedDifficulty(): void {
-    this.selectedDifficulty = DifficultiesEnum[this.userDifficulty];
-  }
 
   detectMines(tile: TilesComponent): void {
     let tileX = tile.coordonate[0];
@@ -139,7 +123,7 @@ export class BoardComponent {
       tile.minesAround++;
     }
 
-    if (tileX + 1 < this.difficultyConfig.rows && this.board[tileX + 1][tileY].mined){
+    if (tileX + 1 < this.selectedDifficulty.rows && this.board[tileX + 1][tileY].mined){
       tile.minesAround++;
     }
 
@@ -147,7 +131,7 @@ export class BoardComponent {
       tile.minesAround++;
     }
 
-    if (tileY + 1 < this.difficultyConfig.columns && this.board[tileX][tileY + 1].mined){
+    if (tileY + 1 < this.selectedDifficulty.columns && this.board[tileX][tileY + 1].mined){
       tile.minesAround++;
     }
 
@@ -155,15 +139,15 @@ export class BoardComponent {
       tile.minesAround++;
     }
 
-    if ((tileX + 1 < this.difficultyConfig.rows && tileY + 1 < this.difficultyConfig.columns) && this.board[tileX + 1][tileY + 1].mined){
+    if ((tileX + 1 < this.selectedDifficulty.rows && tileY + 1 < this.selectedDifficulty.columns) && this.board[tileX + 1][tileY + 1].mined){
       tile.minesAround++;
     }
 
-    if ((tileX - 1 >= 0 && tileY + 1 < this.difficultyConfig.columns) && this.board[tileX - 1][tileY + 1].mined){
+    if ((tileX - 1 >= 0 && tileY + 1 < this.selectedDifficulty.columns) && this.board[tileX - 1][tileY + 1].mined){
       tile.minesAround++;
     }
 
-    if ((tileX + 1 < this.difficultyConfig.rows && tileY - 1 >= 0) && this.board[tileX + 1][tileY - 1].mined){
+    if ((tileX + 1 < this.selectedDifficulty.rows && tileY - 1 >= 0) && this.board[tileX + 1][tileY - 1].mined){
       tile.minesAround++;
     }
   }

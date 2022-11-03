@@ -3,6 +3,7 @@ import { observable, Observable } from 'rxjs';
 import { BoardComponent } from './board/board.component';
 import { TilesComponent } from './board/tiles/tiles.component';
 import { DifficultiesEnum } from './Enums/difficulties.enum';
+import { DifficultyOption } from './interfaces/difficulties_options.interface';
 
 @Component({
   selector: 'app-minesweeper',
@@ -11,25 +12,45 @@ import { DifficultiesEnum } from './Enums/difficulties.enum';
 })
 export class MineSweeperComponent{
   
-  board = new BoardComponent();
-  difficulties = DifficultiesEnum;
-  userDifficulty$ :Observable<DifficultiesEnum> = new Observable;
-  userDifficulty : DifficultiesEnum = DifficultiesEnum.easy;
+  selectedDifficulty: string = '';
+  difficultiesEnum = DifficultiesEnum;
   winState: string = '';
-  flagCount: number = 10;
+  flagCount: number;
+  difficultiesConfig: DifficultyOption[] = [
+    {
+      difficulty: DifficultiesEnum.easy,
+      rows: 8,
+      columns: 10,
+      mineCount: 10,
+    },
+    {
+      difficulty: DifficultiesEnum.medium,
+      rows: 14,
+      columns: 18,
+      mineCount: 40
+    },
+    {
+      difficulty: DifficultiesEnum.hard,
+      rows: 20,
+      columns: 26,
+      mineCount: 99,
+    },
+  ]
+  board: BoardComponent;
+
   constructor() {
-    this.init();
+    this.flagCount = this.difficultiesConfig[DifficultiesEnum.easy].mineCount;
+    this.board = new BoardComponent(this.difficultiesConfig[DifficultiesEnum.easy]);
   }
 
-  init(): void{
-    this.userDifficulty$.subscribe((difficulty) => {
-      difficulty = this.difficulties.easy;      
-      this.userDifficulty = this.difficulties.easy;
-    });    
+  onSelect(value: string): void {
+    this.selectedDifficulty = value;
+    this.flagCount = this.difficultiesConfig[this.Number(this.selectedDifficulty)].mineCount;
+    this.board = new BoardComponent(this.difficultiesConfig[Number(this.selectedDifficulty)]);
   }
 
-  flagCountdown(e: any):void {
-    this.flagCount = e;
+  Number(value: string): number{
+    return Number(value);
   }
 
   onLeftClick(tile: TilesComponent) {
@@ -49,7 +70,8 @@ export class MineSweeperComponent{
   }
 
   resetGame(): void{
-    this.board.initBoard(this.userDifficulty);
+    this.board.initBoard();
+    this.flagCount = this.difficultiesConfig[this.Number(this.selectedDifficulty)].mineCount;
     this.winState = '';
   }
 

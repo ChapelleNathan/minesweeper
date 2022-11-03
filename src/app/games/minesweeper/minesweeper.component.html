@@ -2,10 +2,10 @@
 <ng-container *ngIf="winState == 'loose'"><p>You loosed noob</p></ng-container>
 <div class="minesweeper_window">
     <div class="games_bar">
-        <select name="game_difficulty" id="gameDifficulty">
-            <option value="easy">{{ difficulties[0] }}</option>
-            <option value="medium">{{ difficulties[1] }}</option>
-            <option value="hard">{{ difficulties[2] }}</option>
+        <select #difficulties name="game_difficulty" id="gameDifficulty" (change)="onSelect(difficulties.value)">
+            <ng-container *ngFor="let difficulty of difficultiesConfig">
+                <option value="{{ difficulty.difficulty }}"> {{ difficultiesEnum[difficulty.difficulty] }} </option>
+            </ng-container>
         </select>
         <div class="games_stats">
             <div class="games_stats_flags">
@@ -33,7 +33,7 @@
                 <ng-container *ngFor="let rows of board.board">
                     <tr>
                         <ng-container *ngFor="let tile of rows">
-                            <td [ngSwitch]="tile.tileState" class="tile">
+                            <td [ngSwitch]="tile.tileState" [ngClass]="['tile', difficultiesEnum[Number(selectedDifficulty)]]">
                                 <div class="empty" *ngSwitchCase="tile.states.empty" (click)="onLeftClick(tile)"><p>{{ tile.minesAround }}</p></div>
                                 <div class="flag" *ngSwitchCase="tile.states.flagged" (click)="onLeftClick(tile)" (contextmenu)="onRightClick(tile)">🚩</div>
                                 <div class="mined" *ngSwitchCase="tile.states.mined" (click)="onLeftClick(tile)">💣</div>
@@ -47,5 +47,4 @@
             </tbody>
         </table>
     </div>
-    
 </div>
