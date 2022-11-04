@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { observable, Observable } from 'rxjs';
+import { Component } from '@angular/core';
+import { TimerService } from '../service/timer.service';
 import { BoardComponent } from './board/board.component';
 import { TilesComponent } from './board/tiles/tiles.component';
 import { DifficultiesEnum } from './Enums/difficulties.enum';
@@ -15,6 +15,8 @@ export class MineSweeperComponent{
   selectedDifficulty: string = '';
   difficultiesEnum = DifficultiesEnum;
   winState: string = '';
+  timerService: TimerService = new TimerService();
+  firstClick: boolean = true;
   flagCount: number;
   difficultiesConfig: DifficultyOption[] = [
     {
@@ -54,6 +56,10 @@ export class MineSweeperComponent{
   }
 
   onLeftClick(tile: TilesComponent) {
+    if(this.firstClick){
+      this.firstClick = false;      
+      this.timerService.startTimer();
+    }
     switch (tile.tileState) {
       case tile.states.hidden:
           if(tile.mined){
@@ -67,12 +73,6 @@ export class MineSweeperComponent{
         console.log("there is a flag");
         break;
     }
-  }
-
-  resetGame(): void{
-    this.board.initBoard();
-    this.flagCount = this.difficultiesConfig[this.Number(this.selectedDifficulty)].mineCount;
-    this.winState = '';
   }
 
   onRightClick(tile: TilesComponent){
@@ -92,6 +92,16 @@ export class MineSweeperComponent{
     }
   }
 
+  
+  resetGame(): void{
+    this.timerService.resetTimer();
+    //this.timerService = new TimerService();
+    this.firstClick = true;
+    this.board.initBoard();
+    this.flagCount = this.difficultiesConfig[this.Number(this.selectedDifficulty)].mineCount;
+    this.winState = '';
+  }
+
   checkWinCondition(): void{
     let missing = this.board.notMinedTiles.filter(tile => this.board.emptyTiles.indexOf(tile) < 0);
     if(missing.length === 0){
@@ -100,6 +110,7 @@ export class MineSweeperComponent{
   }
 
   gameOver(): void {
+    this.timerService.stopTimer();
     this.board.minedTiles.forEach(minedTile => {
       minedTile.setMine();
       this.winState = 'loose';

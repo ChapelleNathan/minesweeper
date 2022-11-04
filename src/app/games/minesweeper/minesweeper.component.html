@@ -14,7 +14,7 @@
             </div>
             <div class="games_stats_time">
                 ⏱️
-                <p>000</p>
+                <p>{{ timerService.chrono }}</p>
             </div>
         </div>
         <div class="reset_button" (click)="resetGame()">
@@ -34,7 +34,9 @@
                     <tr>
                         <ng-container *ngFor="let tile of rows">
                             <td [ngSwitch]="tile.tileState" [ngClass]="['tile', difficultiesEnum[Number(selectedDifficulty)]]">
-                                <div class="empty" *ngSwitchCase="tile.states.empty" (click)="onLeftClick(tile)"><p>{{ tile.minesAround }}</p></div>
+                                <div class="empty" *ngSwitchCase="tile.states.empty" (click)="onLeftClick(tile)">
+                                    <p *ngIf="tile.minesAround > 0">{{ tile.minesAround }}</p>
+                                </div>
                                 <div class="flag" *ngSwitchCase="tile.states.flagged" (click)="onLeftClick(tile)" (contextmenu)="onRightClick(tile)">🚩</div>
                                 <div class="mined" *ngSwitchCase="tile.states.mined" (click)="onLeftClick(tile)">💣</div>
                                 <div *ngSwitchDefault (click)="onLeftClick(tile)" (contextmenu)="onRightClick(tile)">
