@@ -66,6 +66,9 @@ export class MineSweeperComponent{
   }
 
   onLeftClick(tile: TilesComponent) {
+    if(this.gameEnded()){
+      return;
+    }
     if(this.firstClick){
       this.firstClick = false;      
       this.timerService.startTimer();
@@ -86,6 +89,9 @@ export class MineSweeperComponent{
   }
 
   onRightClick(tile: TilesComponent){
+    if (this.gameEnded()){
+      return;
+    }
     if(tile.tileState === tile.states.hidden){
       if(this.flagCount > 0){
         tile.setFlag();
@@ -105,7 +111,6 @@ export class MineSweeperComponent{
   
   resetGame(): void{
     this.timerService.resetTimer();
-    //this.timerService = new TimerService();
     this.firstClick = true;
     this.board.initBoard();
     this.flagCount = this.difficultiesConfig[this.Number(this.selectedDifficulty)].mineCount;
@@ -118,6 +123,10 @@ export class MineSweeperComponent{
       this.timerService.stopTimer();
       this.winState = 'win';
     }
+  }
+
+  gameEnded(): boolean {
+    return this.winState === 'win' || this.winState === 'loose' ? true : false;
   }
 
   gameOver(): void {
