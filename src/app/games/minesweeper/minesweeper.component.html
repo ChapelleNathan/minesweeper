@@ -4,7 +4,7 @@
     <div class="games_bar">
         <select #difficulties name="game_difficulty" id="gameDifficulty" (change)="onSelect(difficulties.value)">
             <ng-container *ngFor="let difficulty of difficultiesConfig">
-                <option value="{{ difficulty.difficulty }}"> {{ difficultiesEnum[difficulty.difficulty] }} </option>
+                <option value="{{ difficulty.difficulty }}"> {{ difficultiesEnum[difficulty.difficulty] | titlecase }} </option>
             </ng-container>
         </select>
         <div class="games_stats">
@@ -35,7 +35,7 @@
                         <ng-container *ngFor="let tile of rows">
                             <td [ngSwitch]="tile.tileState" [ngClass]="['tile', difficultiesEnum[Number(selectedDifficulty)]]">
                                 <div class="empty" *ngSwitchCase="tile.states.empty" (click)="onLeftClick(tile)">
-                                    <p *ngIf="tile.minesAround > 0">{{ tile.minesAround }}</p>
+                                    <p  [ngClass]="mineDetectorStyles[tile.minesAround - 1]" *ngIf="tile.minesAround > 0">{{ tile.minesAround }}</p>
                                 </div>
                                 <div class="flag" *ngSwitchCase="tile.states.flagged" (click)="onLeftClick(tile)" (contextmenu)="onRightClick(tile)">🚩</div>
                                 <div class="mined" *ngSwitchCase="tile.states.mined" (click)="onLeftClick(tile)">💣</div>

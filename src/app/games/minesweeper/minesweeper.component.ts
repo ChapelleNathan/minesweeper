@@ -18,6 +18,16 @@ export class MineSweeperComponent{
   timerService: TimerService = new TimerService();
   firstClick: boolean = true;
   flagCount: number;
+  mineDetectorStyles = [
+    'one',
+    'two',
+    'tree',
+    'four',
+    'five',
+    'six',
+    'seven',
+    'eight'
+  ]
   difficultiesConfig: DifficultyOption[] = [
     {
       difficulty: DifficultiesEnum.easy,
@@ -103,8 +113,9 @@ export class MineSweeperComponent{
   }
 
   checkWinCondition(): void{
-    let missing = this.board.notMinedTiles.filter(tile => this.board.emptyTiles.indexOf(tile) < 0);
+    let missing = this.board.notMinedTiles.filter(tile => this.board.emptyTiles.indexOf(tile) < 0);    
     if(missing.length === 0){
+      this.timerService.stopTimer();
       this.winState = 'win';
     }
   }

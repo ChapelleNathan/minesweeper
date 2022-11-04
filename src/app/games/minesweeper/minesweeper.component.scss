@@ -94,6 +94,35 @@
 
 .tile{
     background-color: #aad751;
+    .one{
+      color: #1976d2;
+    }
+    
+    .two {
+      color: #388e3c;
+    }
+    
+    .tree {
+      color: #d32f2f;
+    }
+    
+    .four {
+      color: #7b1fa2
+    } 
+
+    .five{
+      color: #f0a433;
+    }
+    .six{
+      color: #000cad;
+    }
+    .seven{
+      color: #a10000;
+    }
+    .eight{
+      color: $primary-dark;
+
+    }
 }
 
 .tile:hover{
@@ -113,5 +142,4 @@
       color: black;
     }
 }
-
 }

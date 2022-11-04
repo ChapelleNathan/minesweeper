@@ -50,6 +50,9 @@ export class BoardComponent {
 
 
   initBoard(): void {
+    this.minedTiles = [];
+    this.notMinedTiles = [];
+    this.emptyTiles = [];
     this.board = this.buildBoard();    
   }
 
@@ -69,7 +72,7 @@ export class BoardComponent {
           this.notMinedTiles.push(board[x][y]);
         }
       }
-    }
+    }        
     return board;
   }
 
@@ -84,7 +87,7 @@ export class BoardComponent {
         minedTile.newMine();
         this.minedTiles.push(minedTile);
       }
-    }
+    }    
     return board;
   }
 
