@@ -1,145 +1,223 @@
 @import "../../../vars.scss";
 
 .minesweeper_window {
-
-  .games_bar {
-    background-color: $primary-color;
-    height: 50px;
-    width: 100%;
-    display: flex;
-    justify-content: space-evenly;
-    select {
-      background-color: $primary-light;
-      border: 1px solid $primary-light;
-      border-radius: 5px;
-      width: 90px;
-      height: 25px;
-      align-self: center;
-      font-size: 14px;
-    }
-  }
-
+  position: relative;
   p {
     color: $primary-light;
   }
-
-  .games_stats {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    font-size: 22px;
-    &_flags {
+  .game_zone {
+    .games_bar {
+      background-color: $primary-color;
+      height: 50px;
+      width: 100%;
       display: flex;
-      gap: 4px;
-      .bi-flag-fill {
-        color: #b6301e;
+      justify-content: space-evenly;
+      select {
+        background-color: $primary-light;
+        border: 1px solid $primary-light;
+        border-radius: 5px;
+        width: 90px;
+        height: 25px;
+        align-self: center;
+        font-size: 14px;
       }
     }
-    &_time {
-      .bi-stopwatch-fill {
-        color: #fdb034;
-      }
+    .games_stats {
       display: flex;
-      gap: 3px;
+      align-items: center;
+      gap: 16px;
+      font-size: 22px;
+      &_flags {
+        display: flex;
+        gap: 4px;
+        .bi-flag-fill {
+          color: #b6301e;
+        }
+      }
+      &_time {
+        .bi-stopwatch-fill {
+          color: #fdb034;
+        }
+        display: flex;
+        gap: 3px;
+      }
+
+      &_icons {
+        width: 25px;
+        height: 25px;
+      }
     }
 
-    &_icons {
-      width: 25px;
-      height: 25px;
+    .reset_button {
+      align-self: center;
+      cursor: pointer;
+      .bi-arrow-counterclockwise {
+        color: $primary-light;
+        width: 25px;
+        height: 25px;
+      }
     }
-  }
 
-  .reset_button{
-    align-self: center;
-    cursor: pointer;
-    .bi-arrow-counterclockwise {
-      color: $primary-light;
-      width: 25px;
-      height: 25px;
-    }
-  }
-
-  .easy{
-    $width : 45px;
-    width: $width;
-    height: $width;
-    .hidden,.flag,.mined,.empty{
+    .easy {
+      $width: 45px;
+      width: $width;
+      height: $width;
+      .hidden,
+      .flag,
+      .mined,
+      .empty {
         width: $width;
-       height: $width;
-       font-size: calc($width - 6px);
+        height: $width;
+        font-size: calc($width - 6px);
+      }
     }
-  }
 
-  .medium{
-    $width : 30px;
-    width: $width;
-    height: $width;
-    .hidden,.flag,.mined,.empty{
+    .medium {
+      $width: 30px;
+      width: $width;
+      height: $width;
+      .hidden,
+      .flag,
+      .mined,
+      .empty {
         width: $width;
-       height: $width;
-       font-size: calc($width - 6px);
+        height: $width;
+        font-size: calc($width - 6px);
+      }
     }
-  }
 
-  .hard{
-    $width : 24px;
-    width: $width;
-    height: $width;
-    .hidden,.flag,.mined,.empty{
+    .hard {
+      $width: 24px;
+      width: $width;
+      height: $width;
+      .hidden,
+      .flag,
+      .mined,
+      .empty {
         width: $width;
-       height: $width;
-       font-size: calc($width - 6px);
+        height: $width;
+        font-size: calc($width - 6px);
+      }
+    }
+
+    .tile {
+      background-color: #aad751;
+      .one {
+        color: #1976d2;
+      }
+
+      .two {
+        color: #388e3c;
+      }
+
+      .tree {
+        color: #d32f2f;
+      }
+
+      .four {
+        color: #7b1fa2;
+      }
+
+      .five {
+        color: #f0a433;
+      }
+      .six {
+        color: #000cad;
+      }
+      .seven {
+        color: #a10000;
+      }
+      .eight {
+        color: $primary-dark;
+      }
+    }
+
+    .tile:hover {
+      background-color: #c9f07c;
+    }
+
+    .flag,
+    .mined,
+    .empty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+    }
+
+    .empty {
+      background-color: #e5c29f;
+      p {
+        color: black;
+      }
     }
   }
 
-.tile{
-    background-color: #aad751;
-    .one{
-      color: #1976d2;
+  .end_game_zone {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.76);
+    .won,
+    .lost {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
+      &__card {
+        background-color: $primary-dark;
+        width: 300px;
+        height: 330px;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        h2{
+          color: $primary-light;
+          margin: 15px;
+        }
+        .game_stats{
+          display: flex;
+          justify-content: center;
+          gap: 20px;
+          width: 100%;
+          .time_spent, .remaining_mines{
+            gap: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 35%;
+            &__icone{
+              font-size: 50px;
+            }
+            &__score{
+              font-size: 25px;
+            }
+        }
+        }
+        .retry_button{
+          background-color: #4a752c;
+          padding-inline: 50px;
+          padding-block: 10px;
+          border-radius: 10px;
+          cursor: pointer;
+          margin: 15px;
+          font-size: larger;
+          transition: .3s;
+          p{
+            display: flex;
+            align-items: center;
+            gap: 6px;
+          }
+          &:hover{
+            box-shadow: #4a752c 0 0 5px 1px;
+          }
+        }
+      }
     }
-    
-    .two {
-      color: #388e3c;
-    }
-    
-    .tree {
-      color: #d32f2f;
-    }
-    
-    .four {
-      color: #7b1fa2
-    } 
-
-    .five{
-      color: #f0a433;
-    }
-    .six{
-      color: #000cad;
-    }
-    .seven{
-      color: #a10000;
-    }
-    .eight{
-      color: $primary-dark;
-
-    }
-}
-
-.tile:hover{
-    background-color: #c9f07c;
-}
-
-.flag, .mined, .empty{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    user-select: none;
-}
-
-.empty{
-    background-color: #e5c29f;
-    p{
-      color: black;
-    }
-}
+  }
 }
