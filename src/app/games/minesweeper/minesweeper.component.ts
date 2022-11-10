@@ -64,12 +64,13 @@ export class MineSweeperComponent {
     this.board = new BoardComponent(
       this.difficultiesConfig[Number(this.selectedDifficulty)]
     );
+    this.onResetGame();
   }
 
   onLeftClick(tile: TilesComponent) {
     if (!this.gameStarted) {
       this.board.startGame(tile);
-      this.gameStarted = true;
+      this.gameStarted = true;      
       this.timerService.startTimer();
     }
     if (this.gameEnded()) {
@@ -93,9 +94,6 @@ export class MineSweeperComponent {
   }
 
   onRightClick(tile: TilesComponent) {
-    if (this.gameEnded()) {
-      return;
-    }
     if (tile.tileState === tile.states.hidden) {
       if (this.flagCount > 0) {
         tile.setFlag();
@@ -104,7 +102,7 @@ export class MineSweeperComponent {
         console.log("vous n'avez plus de drapeau");
       }
     } else {
-      if (this.flagCount <= 10) {
+      if (this.flagCount <= this.difficultiesConfig[this.Number(this.selectedDifficulty)].mineCount) {
         tile.setFlag();
         ++this.flagCount;
       }
@@ -124,7 +122,7 @@ export class MineSweeperComponent {
   checkWinCondition(): void {
     let missing = this.board
       .getNotMinedTiles()
-      .filter((tile) => this.board.getEmptyTiles().indexOf(tile) < 0);
+      .filter((tile) => this.board.getEmptyTiles().indexOf(tile) < 0);    
     if (missing.length === 0) {
       this.timerService.stopTimer();
       this.winState = 'win';

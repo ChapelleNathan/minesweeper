@@ -49,7 +49,7 @@ export class BoardComponent {
     );
     this.notMinedTiles = this.tiles.filter(
       (tile) => !this.minedTiles.includes(tile)
-    );
+    );    
   }
 
   generateMine(
