@@ -62,9 +62,7 @@ export class BoardComponent {
       let y = Math.floor(Math.random() * board[0].length);
       let minedTile = board[x][y];
       if (this.minedTiles.includes(minedTile) ||  minedTile === originTile || this.detectTiles(originTile).includes(minedTile)) {
-        this.generateMine(board, 1, originTile);
-        console.log('toto');
-        
+        this.generateMine(board, 1, originTile);        
       } else {
         minedTile.newMine();
         this.minedTiles.push(minedTile);
