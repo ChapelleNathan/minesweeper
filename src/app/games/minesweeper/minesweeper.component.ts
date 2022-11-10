@@ -12,13 +12,14 @@ import { DifficultyOption } from './interfaces/difficulties_options.interface';
 })
 export class MineSweeperComponent{
   
-  selectedDifficulty: string = '';
-  difficultiesEnum = DifficultiesEnum;
-  winState: string = '';
-  timerService: TimerService = new TimerService();
-  firstClick: boolean = true;
-  flagCount: number;
-  mineDetectorStyles = [
+  public board: BoardComponent;
+  public selectedDifficulty: string = '';
+  public difficultiesEnum = DifficultiesEnum;
+  public winState: string = '';
+  public timerService: TimerService = new TimerService();
+  private firstClick: boolean = true;
+  public flagCount: number;
+  public mineDetectorStyles = [
     'one',
     'two',
     'tree',
@@ -28,7 +29,7 @@ export class MineSweeperComponent{
     'seven',
     'eight'
   ]
-  difficultiesConfig: DifficultyOption[] = [
+  public difficultiesConfig: DifficultyOption[] = [
     {
       difficulty: DifficultiesEnum.easy,
       rows: 8,
@@ -48,7 +49,7 @@ export class MineSweeperComponent{
       mineCount: 99,
     },
   ]
-  board: BoardComponent;
+  
 
   constructor() {
     this.flagCount = this.difficultiesConfig[DifficultiesEnum.easy].mineCount;
@@ -118,7 +119,7 @@ export class MineSweeperComponent{
   }
 
   checkWinCondition(): void{
-    let missing = this.board.notMinedTiles.filter(tile => this.board.emptyTiles.indexOf(tile) < 0);    
+    let missing = this.board.getNotMinedTiles().filter(tile => this.board.getEmptyTiles().indexOf(tile) < 0);       
     if(missing.length === 0){
       this.timerService.stopTimer();
       this.winState = 'win';
@@ -131,7 +132,7 @@ export class MineSweeperComponent{
 
   gameOver(): void {
     this.timerService.stopTimer();
-    this.board.minedTiles.forEach(minedTile => {
+    this.board.getMinedTiles().forEach(minedTile => {
       minedTile.setMine();
       this.winState = 'loose';
     })

@@ -30,7 +30,7 @@
         <div class="board" (contextmenu)="contextMenu($event)">
             <table>
                 <tbody>
-                    <ng-container *ngFor="let rows of board.board">
+                    <ng-container *ngFor="let rows of board.getBoard()">
                         <tr>
                             <ng-container *ngFor="let tile of rows">
                                 <td [ngSwitch]="tile.tileState"
