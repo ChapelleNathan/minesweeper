@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { __await } from 'tslib';
 import { TimerService } from '../service/timer.service';
 import { BoardComponent } from './board/board.component';
 import { TilesComponent } from './board/tiles/tiles.component';
@@ -16,8 +17,8 @@ export class MineSweeperComponent {
   public difficultiesEnum = DifficultiesEnum;
   public winState: string = '';
   public timerService: TimerService = new TimerService();
-  private firstClick: boolean = true;
   public flagCount: number;
+  private gameStarted: boolean = false;
   public mineDetectorStyles = [
     'one',
     'two',
@@ -66,13 +67,15 @@ export class MineSweeperComponent {
   }
 
   onLeftClick(tile: TilesComponent) {
+    if (!this.gameStarted) {
+      this.board.startGame(tile);
+      this.gameStarted = true;
+      this.timerService.startTimer();
+    }
     if (this.gameEnded()) {
       return;
     }
-    if (this.firstClick) {
-      this.firstClick = false;
-      this.timerService.startTimer();
-    }
+
     switch (tile.tileState) {
       case tile.states.hidden:
         if (tile.mined) {
@@ -81,6 +84,7 @@ export class MineSweeperComponent {
         }
         this.board.digRecurs(tile);
         this.checkWinCondition();
+
         break;
       case tile.states.flagged:
         console.log('there is a flag');
@@ -110,7 +114,7 @@ export class MineSweeperComponent {
 
   onResetGame(): void {
     this.timerService.resetTimer();
-    this.firstClick = true;
+    this.gameStarted = false;
     this.board.initBoard();
     this.flagCount =
       this.difficultiesConfig[this.Number(this.selectedDifficulty)].mineCount;

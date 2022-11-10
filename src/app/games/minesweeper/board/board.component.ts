@@ -26,7 +26,6 @@ export class BoardComponent {
     this.emptyTiles = [];
     this.tiles = [];
     this.board = this.buildBoard();
-    this.startGame();
   }
 
   buildBoard(): TilesComponent[][] {
@@ -42,30 +41,35 @@ export class BoardComponent {
     return newBoard;
   }
 
-  startGame(): void {
+  startGame(startTile: TilesComponent): void {
     this.board = this.generateMine(
       this.board,
-      this.selectedDifficulty.mineCount
+      this.selectedDifficulty.mineCount,
+      startTile
     );
     this.notMinedTiles = this.tiles.filter(
       (tile) => !this.minedTiles.includes(tile)
-    );    
+    );
   }
 
   generateMine(
     board: TilesComponent[][],
-    mineCount: number
+    mineCount: number,
+    originTile: TilesComponent,
   ): TilesComponent[][] {
     for (let i = 0; i < mineCount; i++) {
       let x = Math.floor(Math.random() * board.length);
       let y = Math.floor(Math.random() * board[0].length);
       let minedTile = board[x][y];
-      if (this.minedTiles.includes(minedTile)) {
-        this.generateMine(board, 1);
+      if (this.minedTiles.includes(minedTile) ||  minedTile === originTile || this.detectTiles(originTile).includes(minedTile)) {
+        this.generateMine(board, 1, originTile);
+        console.log('toto');
+        
       } else {
         minedTile.newMine();
         this.minedTiles.push(minedTile);
-        this.detectTiles(minedTile);
+        let verifiedTiles = this.detectTiles(minedTile);
+        verifiedTiles.forEach(tile => tile.minesAround++);
       }
     }
 
@@ -103,9 +107,10 @@ export class BoardComponent {
     }
   }
 
-  detectTiles(mine: TilesComponent): void {
+  detectTiles(mine: TilesComponent): TilesComponent[] {
     const x = mine.coordonate[0];
     const y = mine.coordonate[1];
+    let verifiedTiles: TilesComponent[] = [];
     const peers = [
       [1, 1],
       [1, 0],
@@ -124,9 +129,10 @@ export class BoardComponent {
         checkedTile = null;
       }
       if (checkedTile && checkedTile !== null && !checkedTile.mined) {
-        checkedTile.minesAround++;
+        verifiedTiles.push(checkedTile);
       }
     }
+    return verifiedTiles;
   }
 
   getMinedTiles(): TilesComponent[] {
