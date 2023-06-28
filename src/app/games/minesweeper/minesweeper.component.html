@@ -1,0 +1,110 @@
+<div class="minesweeper_window">
+    <div class="game_zone">
+        <div class="games_bar">
+            <select #difficulties name="game_difficulty" id="gameDifficulty" (change)="onSelect(difficulties.value)">
+                <ng-container *ngFor="let difficulty of difficultiesConfig">
+                    <option value="{{ difficulty.difficulty }}"> {{ difficultiesEnum[difficulty.difficulty] | titlecase
+                        }} </option>
+                </ng-container>
+            </select>
+            <div class="games_stats">
+                <div class="games_stats_flags">
+                    🚩
+                    <p>{{ flagCount }}</p>
+                </div>
+                <div class="games_stats_time">
+                    ⏱️
+                    <p>{{ timerService.chrono }}</p>
+                </div>
+            </div>
+            <div class="reset_button" (click)="onResetGame()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd" d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z" />
+                    <path
+                        d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z" />
+                </svg>
+            </div>
+        </div>
+
+        <div class="board" (contextmenu)="contextMenu($event)">
+            <table>
+                <tbody>
+                    <ng-container *ngFor="let rows of board.getBoard()">
+                        <tr>
+                            <ng-container *ngFor="let tile of rows">
+                                <td [ngSwitch]="tile.tileState"
+                                    [ngClass]="['tile', difficultiesEnum[Number(selectedDifficulty)]]">
+                                    <div class="empty" *ngSwitchCase="tile.states.empty" (click)="onLeftClick(tile)">
+                                        <p [ngClass]="mineDetectorStyles[tile.minesAround - 1]"
+                                            *ngIf="tile.minesAround > 0">{{ tile.minesAround }}</p>
+                                    </div>
+                                    <div class="flag" *ngSwitchCase="tile.states.flagged" (click)="onLeftClick(tile)"
+                                        (contextmenu)="onRightClick(tile)">🚩</div>
+                                    <div class="mined" *ngSwitchCase="tile.states.mined" (click)="onLeftClick(tile)">💣
+                                    </div>
+                                    <div *ngSwitchDefault (click)="onLeftClick(tile)"
+                                        (contextmenu)="onRightClick(tile)">
+                                        <div class="hidden"></div>
+                                    </div>
+                                </td>
+                            </ng-container>
+                        </tr>
+                    </ng-container>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="end_game_zone" *ngIf="winState !== ''">
+        <div class="won" *ngIf="winState ==='win'">
+            <div class="won__card">
+                <h2>Vous avez Gagné 🎉 !</h2>
+                <div class="game_stats">
+                    <div class="time_spent">
+                        <p class="time_spent__icone">⏱️</p>
+                        <p class="time_spent__score">{{ timerService.chrono }}</p>
+                    </div>
+                </div>
+                <div class="retry_button" (click)="onResetGame()">
+                    <p>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z" />
+                            <path
+                                d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z" />
+                        </svg>
+                        Réessayer
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="lost" *ngIf="winState === 'loose'">
+            <div class="lost__card">
+                <h2>Vous avez Perdu 😥</h2>
+                <div class="game_stats">
+                    <div class="time_spent">
+                        <p class="time_spent__icone">⏱️</p>
+                        <p class="time_spent__score">{{ timerService.chrono }}</p>
+                    </div>
+                    <div class="remaining_mines">
+                        <p class="remaining_mines__icone">💣</p>
+                        <p class="remaining_mines__score">05</p>
+                    </div>
+                </div>
+                <div class="retry_button" (click)="onResetGame()">
+                    <p>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                            class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 0 0-.908-.417A6 6 0 1 0 8 2v1z" />
+                            <path
+                                d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466z" />
+                        </svg>
+                        Réessayer
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

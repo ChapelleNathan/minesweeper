@@ -4,6 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { FooterComponent } from './footer/footer.component';
+import { GamesModule } from './games/games.module';
 
 @NgModule({
   declarations: [
@@ -12,7 +13,8 @@ import { FooterComponent } from './footer/footer.component';
     FooterComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    GamesModule,
   ],
   providers: [],
   bootstrap: [AppComponent]
